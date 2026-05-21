@@ -76,14 +76,20 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
+  RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
+  GPIOC->CRH &= ~(0xFU << 20);
+  GPIOC->CRH |=  (0x2U << 20);
 
+  // Turn LED on before SystemClock_Config
+  GPIOC->BRR = GPIO_BRR_BR13;
   /* USER CODE END Init */
 
   /* Configure the system clock */
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  // If this line is reached, LED turns off
+  GPIOC->BSRR = GPIO_BSRR_BS13;
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -101,8 +107,26 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     const char* msg = "hello from MicroGCS\r\n";
-    HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
-    HAL_Delay(500);
+
+    HAL_StatusTypeDef result = HAL_UART_Transmit(
+        &huart1,
+        (uint8_t*)msg,
+        strlen(msg),
+        100
+    );
+
+    if (result == HAL_OK)
+    {
+        // Normal slow blink: transmit function returned OK
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+        HAL_Delay(500);
+    }
+    else
+    {
+        // Fast blink: UART transmit failed
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+        HAL_Delay(100);
+    }
   }
   /* USER CODE END 3 */
 }
@@ -183,12 +207,24 @@ static void MX_USART1_UART_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
   /* USER CODE BEGIN MX_GPIO_Init_1 */
 
   /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : PC13 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
@@ -208,9 +244,20 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
-  while (1)
-  {
-  }
+
+    RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
+
+    GPIOC->CRH &= ~(0xFU << 20);
+    GPIOC->CRH |=  (0x2U << 20);
+
+    while (1)
+    {
+        GPIOC->BRR = GPIO_BRR_BR13;   // LED ON, active-low on many Blue Pills
+        for (volatile int i = 0; i < 200000; ++i) {}
+
+        GPIOC->BSRR = GPIO_BSRR_BS13; // LED OFF
+        for (volatile int i = 0; i < 200000; ++i) {}
+    }
   /* USER CODE END Error_Handler_Debug */
 }
 #ifdef USE_FULL_ASSERT
