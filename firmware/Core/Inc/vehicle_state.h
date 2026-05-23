@@ -1,6 +1,8 @@
 #ifndef VEHICLE_STATUS_H
 #define VEHICLE_STATUS_H
 
+#include <string.h>
+
 typedef enum {
     MODE_MANUAL,
     MODE_AUTO,
