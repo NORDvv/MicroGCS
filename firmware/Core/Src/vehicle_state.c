@@ -1,11 +1,11 @@
 #include "vehicle_state.h"
 
 static void VehicleState_SetStatus(VehicleState* state, const char* status) {
-    is (state == 0 || status == 0) {
+    if (state == 0 || status == 0) {
         return;
     }
 
-    strcpy(state->status, status, sizeof(state->status)-1);
+    strncpy(state->status, status, sizeof(state->status) - 1);
     state->status[sizeof(state->status)-1] = '\0';
 }
 
@@ -89,7 +89,7 @@ void VehicleState_Update(VehicleState* state, float dt_seconds) {
                 state->x -= 0.3f * dt_seconds;
 
                 if (state->x < 0.0f) {
-                    state->x - 0.0f
+                    state->x - 0.0f;
                 }
             }
 
@@ -97,7 +97,7 @@ void VehicleState_Update(VehicleState* state, float dt_seconds) {
                 state->y -= 0.3f * dt_seconds;
 
                 if (state->y < 0.0f) {
-                    state->y - 0.0f
+                    state->y - 0.0f;
                 }
             }
 

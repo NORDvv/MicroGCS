@@ -21,7 +21,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <string.h>
 
+#include "vehicle_state.h"
+#include "telemetry_generator.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -43,7 +46,8 @@
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-
+static VehicleState vehicle_state;
+static char telemetry_buffer[128];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -96,7 +100,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  VehicleState_Init(&vehicle_state);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -106,27 +110,23 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    const char* msg = "hello from MicroGCS\r\n";
+    VehicleState_Update(&vehicle_state, 0.5f);
 
-    HAL_StatusTypeDef result = HAL_UART_Transmit(
-        &huart1,
-        (uint8_t*)msg,
-        strlen(msg),
-        100
+    TelemetryGenerator_BuildPacket(
+      &vehicle_state,
+      telemetry_buffer,
+      sizeof(telemetry_buffer)
     );
 
-    if (result == HAL_OK)
-    {
-        // Normal slow blink: transmit function returned OK
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-        HAL_Delay(500);
-    }
-    else
-    {
-        // Fast blink: UART transmit failed
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-        HAL_Delay(100);
-    }
+    HAL_UART_Transmit(
+      &huart1,
+      (uint8_t*)telemetry_buffer,
+      strlen(telemetry_buffer),
+      100
+    );
+
+    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+    HAL_Delay(500);
   }
   /* USER CODE END 3 */
 }
