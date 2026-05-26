@@ -101,6 +101,8 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   VehicleState_Init(&vehicle_state);
+  vehicle_state.armed = 1;
+  vehicle_state.mode = MODE_AUTO;
   /* USER CODE END 2 */
 
   /* Infinite loop */
