@@ -30,16 +30,24 @@ public:
     void connectSerial();
     void disconnectSerial();
 
+    void sendCommand(const QString& command);
+
 private:
     QSerialPort serialPort;
     QByteArray receiveBuffer;
 
     Ui::MainWindow *ui;
+
+    QPushButton* LeftMenuButton;
+    QPushButton* RightMenuButton;
+
     QPushButton* RefreshPortsPushButton;
     QPushButton* ConnectToPortPushButton;
     QComboBox* AvailablePortsComboBox;
     QLabel* PortConnectionStatusLabel;
     QTextEdit* MainOutputTextEdit;
+
+
 
     void handleReadyRead();
     void handleSerialError(QSerialPort::SerialPortError error);

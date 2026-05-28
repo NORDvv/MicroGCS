@@ -7,6 +7,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     // UI Widgets set up
     ui->setupUi(this);
+
+    LeftMenuButton = ui->LeftMenuButton;
+    RightMenuButton = ui->RightMenuButton;
+
     RefreshPortsPushButton = ui->RefreshPortsPushButton;
     ConnectToPortPushButton = ui->ConnectToPortPushButton;
     AvailablePortsComboBox = ui->AvailablePortsComboBox;
@@ -26,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
         &QPushButton::clicked,
         this,
         &MainWindow::refreshPorts
-        );
+    );
 
     connect(
         ConnectToPortPushButton,
@@ -43,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
                 connectSerial();
             }
         }
-        );
+    );
 
     connect(
         &serialPort,
@@ -57,7 +61,39 @@ MainWindow::MainWindow(QWidget *parent)
         &QSerialPort::errorOccurred,
         this,
         &MainWindow::handleSerialError
-        );
+    );
+
+    connect(
+        RightMenuButton,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            int ind = ui->MainStackedWidget->currentIndex();
+            if (ind < ui->MainStackedWidget->count()-1) {
+                ind += 1;
+            } else {
+                ind = 0;
+            }
+            ui->MainStackedWidget->setCurrentIndex(ind);
+        }
+    );
+
+    connect(
+        LeftMenuButton,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            int ind = ui->MainStackedWidget->currentIndex();
+            if (ind > 0) {
+                ind -= 1;
+            } else {
+                ind = ui->MainStackedWidget->count()-1;
+            }
+            ui->MainStackedWidget->setCurrentIndex(ind);
+        }
+    );
 
     refreshPorts();
 
@@ -221,6 +257,30 @@ void MainWindow::handleSerialError(QSerialPort::SerialPortError error) {
     {
         disconnectSerial();
     }
+}
+
+void MainWindow::sendCommand(const QString& command)
+{
+    if (!serialPort.isOpen())
+    {
+        ui->MainOutputTextEdit->append("[ERROR] Cannot send command: serial port is not open.");
+        return;
+    }
+
+    QByteArray data = command.toUtf8();
+    data.append("\r\n");
+
+    const qint64 bytesWritten = serialPort.write(data);
+
+    if (bytesWritten == -1)
+    {
+        ui->MainOutputTextEdit->append(
+            QString("[ERROR] Failed to send command: %1").arg(serialPort.errorString())
+            );
+        return;
+    }
+
+    ui->MainOutputTextEdit->append(QString("[TX] %1").arg(command));
 }
 
 MainWindow::~MainWindow()
