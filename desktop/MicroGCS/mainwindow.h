@@ -4,6 +4,11 @@
 #include <QMainWindow>
 #include <QSerialPort>
 #include <QByteArray>
+#include <QSerialPortInfo>
+#include <QComboBox>
+#include <QLabel>
+#include <QPushButton>
+#include <QTextEdit>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -23,9 +28,17 @@ public:
     void connectSerial();
     void disconnectSerial();
 
-
 private:
+    QSerialPort serialPort;
+    QByteArray receiveBuffer;
+
     Ui::MainWindow *ui;
+    QPushButton* RefreshPortsPushButton;
+    QPushButton* ConnectToPortPushButton;
+    QComboBox* AvailablePortsComboBox;
+    QLabel* PortConnectionStatusLabel;
+    QTextEdit* MainOutputTextEdit;
+
     void handleReadyRead();
     void handleSerialError(QSerialPort::SerialPortError error);
 };
