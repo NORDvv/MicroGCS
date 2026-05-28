@@ -10,6 +10,8 @@
 #include <QPushButton>
 #include <QTextEdit>
 
+#include "telemetryparser.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;

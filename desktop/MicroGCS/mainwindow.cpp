@@ -179,6 +179,30 @@ void MainWindow::handleReadyRead() {
         const QString line = QString::fromUtf8(lineBytes);
 
         ui->MainOutputTextEdit->append(QString("[RX] %1").arg(line));
+
+        TelemetryPacket packet;
+        QString parseError;
+
+        if (parseTelemetryLine(line, packet, parseError))
+        {
+            // Temporary proof that parsing works.
+            ui->MainOutputTextEdit->append(
+                QString("[PARSED] mode=%1 batt=%2 alt=%3 x=%4 y=%5")
+                    .arg(packet.mode)
+                    .arg(packet.battery)
+                    .arg(packet.altitude)
+                    .arg(packet.x)
+                    .arg(packet.y)
+                );
+
+            // Later: update labels here.
+        }
+        else
+        {
+            ui->MainOutputTextEdit->append(
+                QString("[PARSE ERROR] %1").arg(parseError)
+                );
+        }
     }
 }
 

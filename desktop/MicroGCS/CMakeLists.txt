@@ -18,12 +18,15 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        telemetryparser.cpp
+        telemetryparser.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(MicroGCS
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        telemetryparser.h telemetryparser.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET MicroGCS APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
