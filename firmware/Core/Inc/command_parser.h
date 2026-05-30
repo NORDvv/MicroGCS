@@ -2,6 +2,8 @@
 #define COMMAND_PARSER_H
 
 #include "vehicle_state.h"
+#include <stdint.h>
+#include <string.h>
 
 typedef enum {
     CMD_RESULT_OK,
@@ -16,5 +18,7 @@ CommandResult CommandParser_Handle(
     char* response_buffer,
     int response_buffer_size
 );
+
+uint8_t CommandParser_ApplyLine(const char* line, VehicleState* state);
 
 #endif

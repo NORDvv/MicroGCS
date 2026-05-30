@@ -25,6 +25,7 @@
 
 #include "vehicle_state.h"
 #include "telemetry_generator.h"
+#include "command_parser.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,7 +35,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define COMMAND_BUFFER_SIZE 64
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -48,6 +49,10 @@ UART_HandleTypeDef huart1;
 /* USER CODE BEGIN PV */
 static VehicleState vehicle_state;
 static char telemetry_buffer[128];
+static uint8_t uart_rx_byte;
+static char command_buffer[COMMAND_BUFFER_SIZE];
+static volatile uint16_t command_buffer_index = 0;
+static volatile uint8_t command_line_ready = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -101,14 +106,39 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   VehicleState_Init(&vehicle_state);
-  vehicle_state.armed = 1;
+  vehicle_state.armed = 0;
   vehicle_state.mode = MODE_AUTO;
+  HAL_UART_Receive_IT(&huart1, &uart_rx_byte, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    if (command_line_ready)
+    {
+        char local_command[COMMAND_BUFFER_SIZE];
+
+        __disable_irq();
+
+        for (uint16_t i = 0; i < COMMAND_BUFFER_SIZE; ++i)
+        {
+            local_command[i] = command_buffer[i];
+
+            if (command_buffer[i] == '\0')
+            {
+                break;
+            }
+        }
+
+        command_buffer_index = 0;
+        command_buffer[0] = '\0';
+        command_line_ready = 0;
+
+        __enable_irq();
+
+        CommandParser_ApplyLine(local_command, &vehicle_state);
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -234,6 +264,45 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
+{
+    if (huart->Instance != USART1)
+    {
+        return;
+    }
+
+    if (!command_line_ready)
+    {
+        if (uart_rx_byte == '\n')
+        {
+            command_buffer[command_buffer_index] = '\0';
+            command_line_ready = 1;
+        }
+        else if (uart_rx_byte != '\r')
+        {
+            if (command_buffer_index < COMMAND_BUFFER_SIZE - 1)
+            {
+                command_buffer[command_buffer_index] = (char)uart_rx_byte;
+                command_buffer_index++;
+            }
+            else
+            {
+                command_buffer_index = 0;
+                command_buffer[0] = '\0';
+            }
+        }
+    }
+
+    HAL_UART_Receive_IT(&huart1, &uart_rx_byte, 1);
+}
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef* huart)
+{
+    if (huart->Instance == USART1)
+    {
+        HAL_UART_Receive_IT(&huart1, &uart_rx_byte, 1);
+    }
+}
 
 /* USER CODE END 4 */
 

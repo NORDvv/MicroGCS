@@ -322,7 +322,7 @@ void MainWindow::sendCommand(const QString& command)
 void MainWindow::updateTelemetryDisplay(const TelemetryPacket& packet)
 {
     // signal block applies to the scope
-    {
+    /*{
         QSignalBlocker blocker(ui->ArmedCheckBox);
         ui->ArmedCheckBox->setChecked(packet.armed);
     }
@@ -335,7 +335,7 @@ void MainWindow::updateTelemetryDisplay(const TelemetryPacket& packet)
         ui->ManualRadioButton->setChecked(packet.mode == "MANUAL");
         ui->AutoRadioButton->setChecked(packet.mode == "AUTO");
         ui->RTLRadioButton->setChecked(packet.mode == "RTL");
-    }
+    }*/
 
     ui->ModeIndicatorLabel->setText(packet.mode);
     ui->BatteryIndicatorLabel->setText(QString("%1 %").arg(packet.battery, 0, 'f', 1));
