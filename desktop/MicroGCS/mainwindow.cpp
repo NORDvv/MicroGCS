@@ -17,6 +17,12 @@ MainWindow::MainWindow(QWidget *parent)
     PortConnectionStatusLabel = ui->PortConnectionStatusLabel;
     MainOutputTextEdit = ui->MainOutputTextEdit;
 
+    ArmedCheckBox = ui->ArmedCheckBox;
+    AutoRadioButton = ui->AutoRadioButton;
+    ManualRadioButton = ui->ManualRadioButton;
+    RTLRadioButton = ui->RTLRadioButton;
+    ResetPushButton = ui->ResetPushButton;
+
 
     // Widgets extra settings
     MainOutputTextEdit->setReadOnly(true);
@@ -95,9 +101,38 @@ MainWindow::MainWindow(QWidget *parent)
         }
     );
 
+    connect(ui->ArmedCheckBox, &QCheckBox::toggled, this, [this](bool checked)
+            {
+                sendCommand(checked ? "CMD;ARM" : "CMD;DISARM");
+            });
+
+    connect(ui->ManualRadioButton, &QRadioButton::clicked, this, [this]()
+            {
+                sendCommand("CMD;MODE=MANUAL");
+                ui->ModeIndicatorLabel->setText("MANUAL");
+            });
+
+    connect(ui->AutoRadioButton, &QRadioButton::clicked, this, [this]()
+            {
+                sendCommand("CMD;MODE=AUTO");
+                ui->ModeIndicatorLabel->setText("AUTO");
+            });
+
+    connect(ui->RTLRadioButton, &QRadioButton::clicked, this, [this]()
+            {
+                sendCommand("CMD;MODE=RTL");
+                ui->ModeIndicatorLabel->setText("RTL");
+            });
+
+    connect(ui->ResetPushButton, &QPushButton::clicked, this, [this]()
+            {
+                sendCommand("CMD;RESET");
+            });
+
+
+    // Proper boot up
     refreshPorts();
-
-
+    setControlPanelEnabled(false);
 }
 
 void MainWindow::refreshPorts() {
@@ -169,6 +204,7 @@ void MainWindow::connectSerial() {
     ui->MainOutputTextEdit->append(
         QString("[INFO] Connected to %1 at 115200 baud.").arg(selectedPortName)
         );
+    setControlPanelEnabled(true);
 }
 
 void MainWindow::disconnectSerial() {
@@ -188,6 +224,7 @@ void MainWindow::disconnectSerial() {
     ConnectToPortPushButton->setText("Connect");
     AvailablePortsComboBox->setEnabled(true);
     RefreshPortsPushButton->setEnabled(true);
+    setControlPanelEnabled(false);
 }
 
 void MainWindow::handleReadyRead() {
@@ -221,17 +258,16 @@ void MainWindow::handleReadyRead() {
 
         if (parseTelemetryLine(line, packet, parseError))
         {
-            // Temporary proof that parsing works.
-            ui->MainOutputTextEdit->append(
+            /*ui->MainOutputTextEdit->append(
                 QString("[PARSED] mode=%1 batt=%2 alt=%3 x=%4 y=%5")
                     .arg(packet.mode)
                     .arg(packet.battery)
                     .arg(packet.altitude)
                     .arg(packet.x)
                     .arg(packet.y)
-                );
+                );*/
 
-            // Later: update labels here.
+            updateTelemetryDisplay(packet);
         }
         else
         {
@@ -281,6 +317,41 @@ void MainWindow::sendCommand(const QString& command)
     }
 
     ui->MainOutputTextEdit->append(QString("[TX] %1").arg(command));
+}
+
+void MainWindow::updateTelemetryDisplay(const TelemetryPacket& packet)
+{
+    // signal block applies to the scope
+    {
+        QSignalBlocker blocker(ui->ArmedCheckBox);
+        ui->ArmedCheckBox->setChecked(packet.armed);
+    }
+
+    {
+        QSignalBlocker blocker1(ui->ManualRadioButton);
+        QSignalBlocker blocker2(ui->AutoRadioButton);
+        QSignalBlocker blocker3(ui->RTLRadioButton);
+
+        ui->ManualRadioButton->setChecked(packet.mode == "MANUAL");
+        ui->AutoRadioButton->setChecked(packet.mode == "AUTO");
+        ui->RTLRadioButton->setChecked(packet.mode == "RTL");
+    }
+
+    ui->ModeIndicatorLabel->setText(packet.mode);
+    ui->BatteryIndicatorLabel->setText(QString("%1 %").arg(packet.battery, 0, 'f', 1));
+    ui->AltitudeIndicatorLabel->setText(QString("%1 m").arg(packet.altitude, 0, 'f', 1));
+    ui->PositionIndicatorLabel->setText(QString("x=%1, y=%2").arg(packet.x).arg(packet.y));
+    ui->WaypointIndicatorLabel->setText(QString::number(packet.waypoint));
+    ui->StatusIndicatorLabel->setText(packet.status);
+}
+
+void MainWindow::setControlPanelEnabled(bool enabled)
+{
+    ui->ArmedCheckBox->setEnabled(enabled);
+    ui->ManualRadioButton->setEnabled(enabled);
+    ui->AutoRadioButton->setEnabled(enabled);
+    ui->RTLRadioButton->setEnabled(enabled);
+    ui->ResetPushButton->setEnabled(enabled);
 }
 
 MainWindow::~MainWindow()

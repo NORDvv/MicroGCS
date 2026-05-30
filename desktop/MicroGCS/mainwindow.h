@@ -9,6 +9,8 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QTextEdit>
+#include <QCheckBox>
+#include <QRadioButton>
 
 #include "telemetryparser.h"
 
@@ -47,9 +49,15 @@ private:
     QLabel* PortConnectionStatusLabel;
     QTextEdit* MainOutputTextEdit;
 
-
+    QCheckBox* ArmedCheckBox;
+    QRadioButton* AutoRadioButton;
+    QRadioButton* ManualRadioButton;
+    QRadioButton* RTLRadioButton;
+    QPushButton* ResetPushButton;
 
     void handleReadyRead();
     void handleSerialError(QSerialPort::SerialPortError error);
+    void updateTelemetryDisplay(const TelemetryPacket& packet);
+    void setControlPanelEnabled(bool enabled);
 };
 #endif // MAINWINDOW_H

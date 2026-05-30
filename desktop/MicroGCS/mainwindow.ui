@@ -18,6 +18,24 @@
 	border-style: outset;
     border-width: 2px;
     border-color: beige;
+}
+
+QFormLayout {
+	border-style: outset;
+    border-width: 2px;
+    border-color: beige;
+}
+
+QVBoxLayout {
+	border-style: outset;
+    border-width: 2px;
+    border-color: beige;
+}
+
+QHBoxLayout {
+	border-style: outset;
+    border-width: 2px;
+    border-color: beige;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -108,106 +126,147 @@
      <widget class="QWidget" name="formLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>40</y>
-        <width>160</width>
-        <height>147</height>
+        <x>380</x>
+        <y>50</y>
+        <width>261</width>
+        <height>211</height>
        </rect>
       </property>
       <layout class="QFormLayout" name="formLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_3">
+       <item row="2" column="0">
+        <widget class="QLabel" name="ModeDisplayLabel">
          <property name="text">
           <string>Mode</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLabel" name="label_4">
+       <item row="2" column="1">
+        <widget class="QLabel" name="ModeIndicatorLabel">
          <property name="text">
-          <string>TextLabel</string>
+          <string>None</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_5">
+       <item row="3" column="0" colspan="2">
+        <widget class="Line" name="line_4">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="BatteryDisplayLabel">
          <property name="text">
           <string>Battery</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Altitude</string>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="1">
-        <widget class="QLabel" name="label_8">
+        <widget class="QLabel" name="BatteryIndicatorLabel">
          <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>X</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>Y</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QLabel" name="label_12">
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="2">
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
+          <string>0%</string>
          </property>
         </widget>
        </item>
        <item row="5" column="0" colspan="2">
-        <widget class="Line" name="line_2">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" colspan="2">
         <widget class="Line" name="line_3">
          <property name="orientation">
           <enum>Qt::Orientation::Horizontal</enum>
          </property>
         </widget>
        </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="AltitudeDisplayLabel">
+         <property name="text">
+          <string>Altitude</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QLabel" name="AltitudeIndicatorLabel">
+         <property name="text">
+          <string>0m</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="PositionDisplayLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Position</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLabel" name="PositionIndicatorLabel">
+         <property name="text">
+          <string>0,0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0" colspan="2">
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="WaypointDisplayLabel">
+         <property name="text">
+          <string>Waypoint</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="QLabel" name="WaypointIndicatorLabel">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="0">
+        <widget class="QLabel" name="SatusDisplayLabel">
+         <property name="text">
+          <string>Status</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="1">
+        <widget class="QLabel" name="StatusIndicatorLabel">
+         <property name="text">
+          <string>None</string>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="0" colspan="2">
+        <widget class="Line" name="line_7">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Recieved</string>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="0" colspan="2">
-        <widget class="Line" name="line_4">
+        <widget class="Line" name="line_8">
          <property name="orientation">
           <enum>Qt::Orientation::Horizontal</enum>
          </property>
@@ -218,15 +277,29 @@
      <widget class="QWidget" name="verticalLayoutWidget">
       <property name="geometry">
        <rect>
-        <x>410</x>
-        <y>70</y>
+        <x>60</x>
+        <y>40</y>
         <width>160</width>
-        <height>201</height>
+        <height>212</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QCheckBox" name="checkBox">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Sent</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_9">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="ArmedCheckBox">
          <property name="text">
           <string>Arm</string>
          </property>
@@ -240,28 +313,28 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_13">
+        <widget class="QLabel" name="ModeSelectorLabel">
          <property name="text">
           <string>Mode:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton_3">
+        <widget class="QRadioButton" name="AutoRadioButton">
          <property name="text">
           <string>Auto</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton_2">
+        <widget class="QRadioButton" name="ManualRadioButton">
          <property name="text">
           <string>Manual</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton">
+        <widget class="QRadioButton" name="RTLRadioButton">
          <property name="text">
           <string>RTL</string>
          </property>
@@ -275,7 +348,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="ResetPushButton">
          <property name="text">
           <string>Reset</string>
          </property>
