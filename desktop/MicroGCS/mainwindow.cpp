@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     MainOutputTextEdit->setReadOnly(true);
     ConnectToPortPushButton->setText("Connect");
     PortConnectionStatusLabel->setText("Disconnected");
+    ui->MainStackedWidget->setCurrentIndex(0);
 
 
     // Signals management
@@ -168,7 +169,7 @@ void MainWindow::connectSerial() {
 
     if (selectedPortName.isEmpty())
     {
-        ui->MainOutputTextEdit->append("[ERROR] No serial port selected.");
+        MainOutputTextEdit->append("[ERROR] No serial port selected.");
         PortConnectionStatusLabel->setText("No port selected");
         return;
     }
@@ -186,7 +187,7 @@ void MainWindow::connectSerial() {
     {
         const QString errorMessage = serialPort.errorString();
 
-        ui->MainOutputTextEdit->append(
+        MainOutputTextEdit->append(
             QString("[ERROR] Failed to open %1: %2")
                 .arg(selectedPortName)
                 .arg(errorMessage)
@@ -201,7 +202,7 @@ void MainWindow::connectSerial() {
     AvailablePortsComboBox->setEnabled(false);
     RefreshPortsPushButton->setEnabled(false);
 
-    ui->MainOutputTextEdit->append(
+    MainOutputTextEdit->append(
         QString("[INFO] Connected to %1 at 115200 baud.").arg(selectedPortName)
         );
     setControlPanelEnabled(true);
@@ -213,7 +214,7 @@ void MainWindow::disconnectSerial() {
         const QString portName = serialPort.portName();
         serialPort.close();
 
-        ui->MainOutputTextEdit->append(
+        MainOutputTextEdit->append(
             QString("[INFO] Disconnected from %1.").arg(portName)
             );
     }
@@ -251,30 +252,45 @@ void MainWindow::handleReadyRead() {
 
         const QString line = QString::fromUtf8(lineBytes);
 
-        ui->MainOutputTextEdit->append(QString("[RX] %1").arg(line));
+        if (line.startsWith("TEL;")) {
+            TelemetryPacket packet;
+            QString parseError;
 
-        TelemetryPacket packet;
-        QString parseError;
-
-        if (parseTelemetryLine(line, packet, parseError))
-        {
-            /*ui->MainOutputTextEdit->append(
-                QString("[PARSED] mode=%1 batt=%2 alt=%3 x=%4 y=%5")
-                    .arg(packet.mode)
-                    .arg(packet.battery)
-                    .arg(packet.altitude)
-                    .arg(packet.x)
-                    .arg(packet.y)
-                );*/
-
-            updateTelemetryDisplay(packet);
+            if (parseTelemetryLine(line, packet, parseError)) {
+                updateTelemetryDisplay(packet);
+            } else {
+                MainOutputTextEdit->append(QString("[PARSE ERROR] %1 - %2").arg(parseError).arg(line));
+            }
+        } else if (line.startsWith("ACK;")) {
+            MainOutputTextEdit->append(QString("[ACK] %1").arg(line));
+        } else if (line.startsWith("ERR;")) {
+            MainOutputTextEdit->append(QString("[ERR] %1").arg(line));
+        } else {
+            MainOutputTextEdit->append(QString("[RX UNKNOWN] %1").arg(line));
         }
-        else
-        {
-            ui->MainOutputTextEdit->append(
-                QString("[PARSE ERROR] %1").arg(parseError)
-                );
-        }
+
+        //MainOutputTextEdit->append(QString("[RX] %1").arg(line));
+
+        // TelemetryPacket packet;
+        // QString parseError;
+
+        // if (parseTelemetryLine(line, packet, parseError))
+        // {
+        //     /*ui->MainOutputTextEdit->append(
+        //         QString("[PARSED] mode=%1 batt=%2 alt=%3 x=%4 y=%5")
+        //             .arg(packet.mode)
+        //             .arg(packet.battery)
+        //             .arg(packet.altitude)
+        //             .arg(packet.x)
+        //             .arg(packet.y)
+        //         );*/
+
+        //     updateTelemetryDisplay(packet);
+        // }
+        // else
+        // {
+        //     ui->MainOutputTextEdit->append(QString("[PARSE ERROR] %1 - %2").arg(parseError).arg(line));
+        // }
     }
 }
 

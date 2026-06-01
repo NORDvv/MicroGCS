@@ -4,6 +4,7 @@
 #include "vehicle_state.h"
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
 
 typedef enum {
     CMD_RESULT_OK,
@@ -19,6 +20,6 @@ CommandResult CommandParser_Handle(
     int response_buffer_size
 );
 
-uint8_t CommandParser_ApplyLine(const char* line, VehicleState* state);
+// uint8_t CommandParser_ApplyLine(const char* line, VehicleState* state);
 
 #endif

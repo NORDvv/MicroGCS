@@ -36,6 +36,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define COMMAND_BUFFER_SIZE 64
+#define COMMAND_RESPONSE_BUFFER_SIZE 96
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -49,10 +50,13 @@ UART_HandleTypeDef huart1;
 /* USER CODE BEGIN PV */
 static VehicleState vehicle_state;
 static char telemetry_buffer[128];
+
 static uint8_t uart_rx_byte;
 static char command_buffer[COMMAND_BUFFER_SIZE];
 static volatile uint16_t command_buffer_index = 0;
 static volatile uint8_t command_line_ready = 0;
+
+static char command_response_buffer[COMMAND_RESPONSE_BUFFER_SIZE];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -119,9 +123,10 @@ int main(void)
     {
         char local_command[COMMAND_BUFFER_SIZE];
 
+        // global disable interrupts to avoid possible data race condition.
         __disable_irq();
 
-        for (uint16_t i = 0; i < COMMAND_BUFFER_SIZE; ++i)
+        /*for (uint16_t i = 0; i < COMMAND_BUFFER_SIZE; ++i)
         {
             local_command[i] = command_buffer[i];
 
@@ -129,15 +134,29 @@ int main(void)
             {
                 break;
             }
-        }
+        }*/
+
+        strncpy(local_command, command_buffer, COMMAND_BUFFER_SIZE);
+        local_command[COMMAND_BUFFER_SIZE-1] = '\0';
 
         command_buffer_index = 0;
         command_buffer[0] = '\0';
         command_line_ready = 0;
 
+        // global enable interrupts
         __enable_irq();
 
-        CommandParser_ApplyLine(local_command, &vehicle_state);
+        //CommandParser_ApplyLine(local_command, &vehicle_state);
+
+        CommandResult result = CommandParser_Handle(local_command, &vehicle_state, command_response_buffer, sizeof(command_response_buffer));
+        if (result != CMD_RESULT_OK)
+        {
+            // TODO deal with the error
+        }
+        
+        if (command_response_buffer[0] != '\0') {
+          HAL_UART_Transmit(&huart1, (uint8_t*)command_response_buffer, strlen(command_response_buffer), 100);
+        }
     }
     /* USER CODE END WHILE */
 
