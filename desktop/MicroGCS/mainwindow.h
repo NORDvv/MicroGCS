@@ -11,6 +11,8 @@
 #include <QTextEdit>
 #include <QCheckBox>
 #include <QRadioButton>
+#include <QTimer>
+#include <QDateTime>
 
 #include "telemetryparser.h"
 
@@ -55,9 +57,23 @@ private:
     QRadioButton* RTLRadioButton;
     QPushButton* ResetPushButton;
 
+    QLabel* TelemetryHealthIndicatorLabel;
+    QLabel* LastUpdateIndicatorLabel;
+    QLabel* CommsAgeIndicatorLabel;
+    QLabel* PacketsNumIndicatorLabel;
+    QLabel* LastCommandIndicatorLabel;
+    QTimer telemetryHealthTimer;
+    QDateTime lastTelemetryTime;
+    uint telemetryPacketCount = 0;
+    bool hasReceivedTelemetry = false;
+
     void handleReadyRead();
     void handleSerialError(QSerialPort::SerialPortError error);
     void updateTelemetryDisplay(const TelemetryPacket& packet);
     void setControlPanelEnabled(bool enabled);
+
+    void updateTelemetryHealth();
+    void markTelemetryReceived();
+    void updateLastCommandResult(const QString& line, bool isError);
 };
 #endif // MAINWINDOW_H

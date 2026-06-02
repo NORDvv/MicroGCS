@@ -23,6 +23,13 @@ MainWindow::MainWindow(QWidget *parent)
     RTLRadioButton = ui->RTLRadioButton;
     ResetPushButton = ui->ResetPushButton;
 
+    TelemetryHealthIndicatorLabel = ui->TelemetryHealthIndicatorLabel;
+    LastUpdateIndicatorLabel = ui->LastUpdateIndicatorLabel;
+    CommsAgeIndicatorLabel = ui->CommsAgeIndicatorLabel;
+    PacketsNumIndicatorLabel = ui->PacketsNumIndicatorLabel;
+    LastCommandIndicatorLabel = ui->LastCommandIndicatorLabel;
+
+
 
     // Widgets extra settings
     MainOutputTextEdit->setReadOnly(true);
@@ -130,10 +137,16 @@ MainWindow::MainWindow(QWidget *parent)
                 sendCommand("CMD;RESET");
             });
 
+    connect(&telemetryHealthTimer,
+            &QTimer::timeout,
+            this,
+            &MainWindow::updateTelemetryHealth);
+
 
     // Proper boot up
     refreshPorts();
     setControlPanelEnabled(false);
+    telemetryHealthTimer.start(250);
 }
 
 void MainWindow::refreshPorts() {
@@ -226,6 +239,14 @@ void MainWindow::disconnectSerial() {
     AvailablePortsComboBox->setEnabled(true);
     RefreshPortsPushButton->setEnabled(true);
     setControlPanelEnabled(false);
+
+    hasReceivedTelemetry = false;
+    telemetryPacketCount = 0;
+    TelemetryHealthIndicatorLabel->setText("Disconnected");
+    LastUpdateIndicatorLabel->setText("---");
+    CommsAgeIndicatorLabel->setText("---");
+    PacketsNumIndicatorLabel->setText("0");
+    LastCommandIndicatorLabel->setText("---");
 }
 
 void MainWindow::handleReadyRead() {
@@ -257,40 +278,20 @@ void MainWindow::handleReadyRead() {
             QString parseError;
 
             if (parseTelemetryLine(line, packet, parseError)) {
+                markTelemetryReceived();
                 updateTelemetryDisplay(packet);
             } else {
                 MainOutputTextEdit->append(QString("[PARSE ERROR] %1 - %2").arg(parseError).arg(line));
             }
         } else if (line.startsWith("ACK;")) {
             MainOutputTextEdit->append(QString("[ACK] %1").arg(line));
+            updateLastCommandResult(line, false);
         } else if (line.startsWith("ERR;")) {
             MainOutputTextEdit->append(QString("[ERR] %1").arg(line));
+            updateLastCommandResult(line, true);
         } else {
             MainOutputTextEdit->append(QString("[RX UNKNOWN] %1").arg(line));
         }
-
-        //MainOutputTextEdit->append(QString("[RX] %1").arg(line));
-
-        // TelemetryPacket packet;
-        // QString parseError;
-
-        // if (parseTelemetryLine(line, packet, parseError))
-        // {
-        //     /*ui->MainOutputTextEdit->append(
-        //         QString("[PARSED] mode=%1 batt=%2 alt=%3 x=%4 y=%5")
-        //             .arg(packet.mode)
-        //             .arg(packet.battery)
-        //             .arg(packet.altitude)
-        //             .arg(packet.x)
-        //             .arg(packet.y)
-        //         );*/
-
-        //     updateTelemetryDisplay(packet);
-        // }
-        // else
-        // {
-        //     ui->MainOutputTextEdit->append(QString("[PARSE ERROR] %1 - %2").arg(parseError).arg(line));
-        // }
     }
 }
 
@@ -368,6 +369,44 @@ void MainWindow::setControlPanelEnabled(bool enabled)
     ui->AutoRadioButton->setEnabled(enabled);
     ui->RTLRadioButton->setEnabled(enabled);
     ui->ResetPushButton->setEnabled(enabled);
+}
+
+void MainWindow::updateTelemetryHealth() {
+    if (!serialPort.isOpen()) {
+        TelemetryHealthIndicatorLabel->setText("Port Disconnected");
+        CommsAgeIndicatorLabel->setText("---");
+        return;
+    }
+
+    if (!hasReceivedTelemetry) {
+        TelemetryHealthIndicatorLabel->setText("Waiting");
+        CommsAgeIndicatorLabel->setText("---");
+        return;
+    }
+
+    const quint64 ageMs = lastTelemetryTime.msecsTo(QDateTime::currentDateTime());
+
+    CommsAgeIndicatorLabel->setText(QString::number(ageMs));
+
+    if (ageMs > 20000) {
+        TelemetryHealthIndicatorLabel->setText("STALE");
+    } else {
+        TelemetryHealthIndicatorLabel->setText("OK");
+    }
+}
+
+void MainWindow::markTelemetryReceived() {
+    hasReceivedTelemetry = true;
+    lastTelemetryTime = QDateTime::currentDateTime();
+    telemetryPacketCount++;
+
+    LastUpdateIndicatorLabel->setText(lastTelemetryTime.toString("HH:mm:ss.zzzz"));
+    PacketsNumIndicatorLabel->setText(QString::number(telemetryPacketCount));
+}
+
+void MainWindow::updateLastCommandResult(const QString& line, bool isError) {
+    const QString prefix = isError ? "ERROR " : "OK ";
+    LastCommandIndicatorLabel->setText(prefix + line);
 }
 
 MainWindow::~MainWindow()
