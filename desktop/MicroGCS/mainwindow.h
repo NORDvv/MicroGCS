@@ -13,6 +13,10 @@
 #include <QRadioButton>
 #include <QTimer>
 #include <QDateTime>
+#include <QFile>
+#include <QTextStream>
+#include <QCoreApplication>
+#include <QDir>
 
 #include "telemetryparser.h"
 
@@ -39,6 +43,10 @@ public:
 private:
     QSerialPort serialPort;
     QByteArray receiveBuffer;
+    QFile logFile;
+    QTextStream logStream;
+    QString currentLogPath;
+    bool telemetryWasStale = false;
 
     Ui::MainWindow *ui;
 
@@ -75,5 +83,10 @@ private:
     void updateTelemetryHealth();
     void markTelemetryReceived();
     void updateLastCommandResult(const QString& line, bool isError);
+
+    void startSessionLog();
+    void stopSessionLog();
+    void logEvent(const QString& direction, const QString& type, const QString& payload);
+    QString escapeCsvField(const QString& value) const;
 };
 #endif // MAINWINDOW_H

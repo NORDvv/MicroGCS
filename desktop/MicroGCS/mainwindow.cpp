@@ -147,6 +147,7 @@ MainWindow::MainWindow(QWidget *parent)
     refreshPorts();
     setControlPanelEnabled(false);
     telemetryHealthTimer.start(250);
+    startSessionLog();
 }
 
 void MainWindow::refreshPorts() {
@@ -207,6 +208,7 @@ void MainWindow::connectSerial() {
             );
 
         PortConnectionStatusLabel->setText("Connection failed");
+        logEvent("SYS", "ERROR", QString("Failed to open %1: %2").arg(selectedPortName).arg(errorMessage));
         return;
     }
 
@@ -219,6 +221,7 @@ void MainWindow::connectSerial() {
         QString("[INFO] Connected to %1 at 115200 baud.").arg(selectedPortName)
         );
     setControlPanelEnabled(true);
+    logEvent("SYS", "CONNECT", QString("Connected to %1 at 115200").arg(selectedPortName));
 }
 
 void MainWindow::disconnectSerial() {
@@ -230,6 +233,8 @@ void MainWindow::disconnectSerial() {
         MainOutputTextEdit->append(
             QString("[INFO] Disconnected from %1.").arg(portName)
             );
+
+        logEvent("SYS","DISCONNECT", QString("Disconnected from %1").arg(portName));
     }
 
     receiveBuffer.clear();
@@ -276,21 +281,26 @@ void MainWindow::handleReadyRead() {
         if (line.startsWith("TEL;")) {
             TelemetryPacket packet;
             QString parseError;
+            logEvent("RX", "TEL", line);
 
             if (parseTelemetryLine(line, packet, parseError)) {
                 markTelemetryReceived();
                 updateTelemetryDisplay(packet);
             } else {
                 MainOutputTextEdit->append(QString("[PARSE ERROR] %1 - %2").arg(parseError).arg(line));
+                logEvent("RX","PARSE_ERROR",QString("%1 | error=%2").arg(line).arg(parseError));
             }
         } else if (line.startsWith("ACK;")) {
             MainOutputTextEdit->append(QString("[ACK] %1").arg(line));
             updateLastCommandResult(line, false);
+            logEvent("RX", "ACK", line);
         } else if (line.startsWith("ERR;")) {
             MainOutputTextEdit->append(QString("[ERR] %1").arg(line));
             updateLastCommandResult(line, true);
+            logEvent("RX", "ERR", line);
         } else {
             MainOutputTextEdit->append(QString("[RX UNKNOWN] %1").arg(line));
+            logEvent("RX", "UNKNOWN", line);
         }
     }
 }
@@ -316,7 +326,8 @@ void MainWindow::sendCommand(const QString& command)
 {
     if (!serialPort.isOpen())
     {
-        ui->MainOutputTextEdit->append("[ERROR] Cannot send command: serial port is not open.");
+        MainOutputTextEdit->append("[ERROR] Cannot send command: serial port is not open.");
+        logEvent("SYS", "ERROR", QString("Cannot send command while disconnected: %1").arg(command));
         return;
     }
 
@@ -327,13 +338,14 @@ void MainWindow::sendCommand(const QString& command)
 
     if (bytesWritten == -1)
     {
-        ui->MainOutputTextEdit->append(
-            QString("[ERROR] Failed to send command: %1").arg(serialPort.errorString())
-            );
+        MainOutputTextEdit->append(QString("[ERROR] Failed to send command: %1").arg(serialPort.errorString()));
+        logEvent("SYS", "ERROR", QString("Failed to send command %1: %2").arg(command).arg(serialPort.errorString()));
         return;
     }
 
     ui->MainOutputTextEdit->append(QString("[TX] %1").arg(command));
+
+    logEvent("TX", "CMD", command);
 }
 
 void MainWindow::updateTelemetryDisplay(const TelemetryPacket& packet)
@@ -390,8 +402,14 @@ void MainWindow::updateTelemetryHealth() {
 
     if (ageMs > 20000) {
         TelemetryHealthIndicatorLabel->setText("STALE");
+
+        if (!telemetryWasStale) {
+            telemetryWasStale = true;
+            logEvent("SYS","WARN",QString("Telemetry stale, age_ms=%1").arg(ageMs));
+        }
     } else {
         TelemetryHealthIndicatorLabel->setText("OK");
+        telemetryWasStale = false;
     }
 }
 
@@ -402,11 +420,78 @@ void MainWindow::markTelemetryReceived() {
 
     LastUpdateIndicatorLabel->setText(lastTelemetryTime.toString("HH:mm:ss.zzzz"));
     PacketsNumIndicatorLabel->setText(QString::number(telemetryPacketCount));
+
+    if (telemetryWasStale){
+        logEvent("SYS", "RECOVERED", "Telemetry recovered");
+    }
+
+    telemetryWasStale = false;
 }
 
 void MainWindow::updateLastCommandResult(const QString& line, bool isError) {
     const QString prefix = isError ? "ERROR " : "OK ";
     LastCommandIndicatorLabel->setText(prefix + line);
+}
+
+void MainWindow::startSessionLog() {
+    const QString logDirectoryPath = QCoreApplication::applicationDirPath() + "/logs";
+    QDir logDirectory(logDirectoryPath);
+
+    if (!logDirectory.exists()) {
+        logDirectory.mkpath(".");
+    }
+
+    const QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd_HH-mm-ss");
+    currentLogPath = logDirectory.filePath(QString("microgcs_%1.csv").arg(timestamp));
+
+    logFile.setFileName(currentLogPath);
+
+    if (!logFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        MainOutputTextEdit->append(QString("[LOG ERROR] Could not open log file: %1").arg(logFile.errorString()));
+        return;
+    }
+
+    logStream.setDevice(&logFile);
+
+    logStream << "timestamp,direction,type,payload\n";
+    logStream.flush();
+
+    MainOutputTextEdit->append(QString("[LOG] Writing session log to: %1").arg(currentLogPath));
+
+    logEvent("SYS", "START", "MicroGCS session started");
+}
+
+void MainWindow::stopSessionLog() {
+    if (!logFile.isOpen()) {
+        return;
+    }
+
+    logEvent("SYS", "STOP", "MicroGCS session stopped");
+    logStream.flush();
+    logFile.close();
+}
+
+void MainWindow::logEvent(const QString& direction, const QString& type, const QString& payload) {
+    if (!logFile.isOpen()) {
+        return;
+    }
+
+    const QString timestamp = QDateTime::currentDateTime().toString(Qt::ISODateWithMs);
+
+    logStream << timestamp << ","
+              << direction << ","
+              << type << ","
+              << escapeCsvField(payload)
+              << "\n";
+
+    logStream.flush();
+}
+
+// prevents stupid errors in CSV, like unintentionl devision into extra columns because the error description has a coma in it.
+QString MainWindow::escapeCsvField(const QString& value) const {
+    QString escaped = value;
+    escaped.replace("\"", "\"\"");
+    return QString("\"%1\"").arg(escaped);
 }
 
 MainWindow::~MainWindow()
@@ -416,5 +501,6 @@ MainWindow::~MainWindow()
         serialPort.close();
     }
 
+    stopSessionLog();
     delete ui;
 }
