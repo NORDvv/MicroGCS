@@ -5,7 +5,7 @@
 static const char* TelemetryGenerator_ModeToString(VehicleMode mode) {
     switch (mode) {
         case MODE_MANUAL:
-            return "MANNUAL";
+            return "MANUAL";
 
         case MODE_AUTO:
             return "AUTO";

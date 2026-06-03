@@ -7,185 +7,112 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>800</height>
+    <height>707</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>MICRO GROUND CONTROL STATION</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QStackedWidget {
-	border-style: outset;
-    border-width: 2px;
-    border-color: beige;
+   <string notr="true">QMainWindow {
+    background-color: #0B1117;
 }
 
-QFrame {
-	border-style: outset;
-    border-width: 1px;
-    border-color: beige;
+QWidget {
+    background-color: #0B1117;
+    color: #E6EDF3;
+    font-family: &quot;Inter&quot;, &quot;Segoe UI&quot;, &quot;Ubuntu&quot;, sans-serif;
+    font-size: 13px;
+}
+
+QFrame, QStackedWidget {
+    background-color: #121A23;
+    border: 1px solid #263241;
+    border-radius: 6px;
+}
+
+QLabel {
+    color: #E6EDF3;
+}
+
+QPushButton {
+    background-color: #1B2733;
+    color: #E6EDF3;
+    border: 1px solid #2E3B4A;
+    border-radius: 5px;
+    padding: 6px 10px;
+}
+
+QPushButton:hover {
+    background-color: #243447;
+    border-color: #1EA7FF;
+}
+
+QPushButton:pressed {
+    background-color: #1EA7FF;
+    color: #061018;
+}
+
+QPushButton:disabled {
+    background-color: #111820;
+    color: #5B6673;
+    border-color: #202A35;
+}
+
+QComboBox {
+    background-color: #121A23;
+    color: #E6EDF3;
+    border: 1px solid #2E3B4A;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+QCheckBox, QRadioButton {
+    color: #E6EDF3;
+    spacing: 8px;
+}
+
+QTextEdit {
+    background-color: #05080C;
+    color: #B7C7D8;
+    border: 1px solid #263241;
+    border-radius: 6px;
+    font-family: &quot;JetBrains Mono&quot;, &quot;Consolas&quot;, &quot;Ubuntu Mono&quot;, monospace;
+    font-size: 14px;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QStackedWidget" name="MainStackedWidget">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>90</y>
-      <width>671</width>
-      <height>501</height>
+      <x>20</x>
+      <y>50</y>
+      <width>761</width>
+      <height>401</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
-    <widget class="QWidget" name="page">
-     <widget class="QWidget" name="formLayoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>50</x>
-        <y>50</y>
-        <width>251</width>
-        <height>171</height>
-       </rect>
-      </property>
-      <layout class="QFormLayout" name="PortConnectionFormLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="AvaliablePortsLabel">
-         <property name="text">
-          <string>Ports</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="AvailablePortsComboBox"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="RefreshPortsPushButton">
-         <property name="text">
-          <string>Refresh</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QPushButton" name="ConnectToPortPushButton">
-         <property name="text">
-          <string>Connect</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="PortConnectionStatusLabel">
-         <property name="text">
-          <string>Status</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QLabel" name="label">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>10</y>
-        <width>121</width>
-        <height>17</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Port Connection</string>
-      </property>
-     </widget>
-    </widget>
     <widget class="QWidget" name="page_2">
-     <widget class="QLabel" name="label_2">
+     <widget class="QWidget" name="horizontalLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>290</x>
+        <x>20</x>
         <y>10</y>
-        <width>101</width>
-        <height>17</height>
+        <width>721</width>
+        <height>31</height>
        </rect>
       </property>
-      <property name="text">
-       <string>Drone Controll</string>
-      </property>
-     </widget>
-     <widget class="QWidget" name="formLayoutWidget_2">
-      <property name="geometry">
-       <rect>
-        <x>380</x>
-        <y>40</y>
-        <width>261</width>
-        <height>231</height>
-       </rect>
-      </property>
-      <layout class="QFormLayout" name="formLayout">
-       <item row="2" column="0">
-        <widget class="QLabel" name="ModeDisplayLabel">
-         <property name="text">
-          <string>Mode</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="ModeIndicatorLabel">
-         <property name="text">
-          <string>None</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" colspan="2">
-        <widget class="Line" name="line_4">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="BatteryDisplayLabel">
-         <property name="text">
-          <string>Battery</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QLabel" name="BatteryIndicatorLabel">
-         <property name="text">
-          <string>0%</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="Line" name="line_3">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="AltitudeDisplayLabel">
-         <property name="text">
-          <string>Altitude</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QLabel" name="AltitudeIndicatorLabel">
-         <property name="text">
-          <string>0m</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="2">
-        <widget class="Line" name="line_2">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="PositionDisplayLabel">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="PortConnectionStatusLabel">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -193,70 +120,49 @@ QFrame {
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Position</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QLabel" name="PositionIndicatorLabel">
-         <property name="text">
-          <string>0,0</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0" colspan="2">
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0">
-        <widget class="QLabel" name="WaypointDisplayLabel">
-         <property name="text">
-          <string>Waypoint</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1">
-        <widget class="QLabel" name="WaypointIndicatorLabel">
-         <property name="text">
-          <string>0</string>
-         </property>
-        </widget>
-       </item>
-       <item row="12" column="0">
-        <widget class="QLabel" name="SatusDisplayLabel">
-         <property name="text">
           <string>Status</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
         </widget>
        </item>
-       <item row="12" column="1">
-        <widget class="QLabel" name="StatusIndicatorLabel">
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="TelemetryHealthDisplayLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Telemetry</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="TelemetryHealthIndicatorLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>None</string>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="0" colspan="2">
-        <widget class="Line" name="line_7">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="Line" name="line_8">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="2">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Recieved</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -265,55 +171,251 @@ QFrame {
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="verticalLayoutWidget">
+     <widget class="Line" name="line">
       <property name="geometry">
        <rect>
-        <x>60</x>
-        <y>40</y>
-        <width>160</width>
-        <height>220</height>
+        <x>0</x>
+        <y>50</y>
+        <width>761</width>
+        <height>20</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QLabel" name="label_4">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QWidget" name="formLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>80</y>
+        <width>351</width>
+        <height>181</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="1" column="0">
+        <widget class="QLabel" name="ModeDisplayLabel">
          <property name="text">
-          <string>Sent</string>
+          <string>Mode</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="Line" name="line_9">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="ArmedCheckBox">
+       <item row="1" column="1">
+        <widget class="QLabel" name="ModeIndicatorLabel">
          <property name="text">
-          <string>Arm</string>
+          <string>None</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="Line" name="line_5">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
+       <item row="2" column="0">
+        <widget class="QLabel" name="BatteryDisplayLabel">
+         <property name="text">
+          <string>Battery</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="BatteryIndicatorLabel">
+         <property name="text">
+          <string>0%</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="AltitudeDisplayLabel">
+         <property name="text">
+          <string>Altitude</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLabel" name="AltitudeIndicatorLabel">
+         <property name="text">
+          <string>0m</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="PositionDisplayLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Position</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLabel" name="PositionIndicatorLabel">
+         <property name="text">
+          <string>0,0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="WaypointDisplayLabel">
+         <property name="text">
+          <string>Waypoint</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLabel" name="WaypointIndicatorLabel">
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="StatusDisplayLabel">
+         <property name="text">
+          <string>Status</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QLabel" name="StatusIndicatorLabel">
+         <property name="text">
+          <string>None</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>VEHICLE STATE</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="Line" name="line_2">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>60</y>
+        <width>20</width>
+        <height>221</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Vertical</enum>
+      </property>
+     </widget>
+     <widget class="QWidget" name="gridLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>80</y>
+        <width>331</width>
+        <height>181</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="4" column="0" colspan="2">
+        <widget class="QPushButton" name="ResetPushButton">
+         <property name="text">
+          <string>Reset</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="3">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>CONTROL</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QRadioButton" name="RTLRadioButton">
+         <property name="text">
+          <string>RTL</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QRadioButton" name="ManualRadioButton">
+         <property name="text">
+          <string>Manual</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
         <widget class="QLabel" name="ModeSelectorLabel">
          <property name="text">
           <string>Mode:</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
         </widget>
        </item>
-       <item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="ArmedCheckBox">
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::RightToLeft</enum>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Armed    </string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
         <widget class="QRadioButton" name="AutoRadioButton">
          <property name="text">
           <string>Auto</string>
@@ -326,194 +428,124 @@ QFrame {
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QRadioButton" name="ManualRadioButton">
+       <item row="5" column="0">
+        <widget class="QLabel" name="LastCommandDisplayLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
-          <string>Manual</string>
+          <string>Last command:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QRadioButton" name="RTLRadioButton">
-         <property name="text">
-          <string>RTL</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="Line" name="line_6">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="ResetPushButton">
-         <property name="text">
-          <string>Reset</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="formLayoutWidget_3">
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>280</y>
-        <width>371</width>
-        <height>201</height>
-       </rect>
-      </property>
-      <layout class="QFormLayout" name="formLayout_2">
-       <property name="sizeConstraint">
-        <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
-       </property>
-       <property name="fieldGrowthPolicy">
-        <enum>QFormLayout::FieldGrowthPolicy::FieldsStayAtSizeHint</enum>
-       </property>
-       <property name="rowWrapPolicy">
-        <enum>QFormLayout::RowWrapPolicy::DontWrapRows</enum>
-       </property>
-       <property name="labelAlignment">
-        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-       </property>
-       <property name="horizontalSpacing">
-        <number>12</number>
-       </property>
-       <property name="verticalSpacing">
-        <number>6</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>6</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>6</number>
-       </property>
-       <item row="2" column="0">
-        <widget class="QLabel" name="TelemetryHealthDisplayLabel">
-         <property name="text">
-          <string>Telemetry</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="TelemetryHealthIndicatorLabel">
-         <property name="text">
-          <string>None</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="LastUpdateDisplayLabel">
-         <property name="text">
-          <string>Last update</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QLabel" name="LastUpdateIndicatorLabel">
-         <property name="text">
-          <string>00:00:00.000</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="CommsAgeDisplayLabel">
-         <property name="text">
-          <string>Age</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QLabel" name="CommsAgeIndicatorLabel">
-         <property name="text">
-          <string>0 ms</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="PacketsNumDisplayLabel">
-         <property name="text">
-          <string>Packets</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QLabel" name="PacketsNumIndicatorLabel">
-         <property name="text">
-          <string>0</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1">
+       <item row="6" column="0" colspan="3">
         <widget class="QLabel" name="LastCommandIndicatorLabel">
          <property name="text">
           <string>None</string>
          </property>
         </widget>
        </item>
-       <item row="9" column="0" colspan="2">
-        <widget class="Line" name="line_14">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="2">
-        <widget class="Line" name="line_13">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="Line" name="line_12">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" colspan="2">
-        <widget class="Line" name="line_11">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="Line" name="line_10">
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="2">
-        <widget class="QLabel" name="label_5">
+      </layout>
+     </widget>
+     <widget class="Line" name="line_3">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>270</y>
+        <width>761</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QWidget" name="gridLayoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>300</y>
+        <width>451</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="2" column="1">
+        <widget class="QLabel" name="CommsAgeIndicatorLabel">
          <property name="text">
-          <string>Telemetry Health</string>
+          <string>0 ms</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignmentFlag::AlignCenter</set>
          </property>
         </widget>
        </item>
-       <item row="10" column="0">
-        <widget class="QLabel" name="LastCommandDisplayLabel">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+       <item row="1" column="1">
+        <widget class="QLabel" name="LastUpdateIndicatorLabel">
          <property name="text">
-          <string>Last command</string>
+          <string>00:00:00.000</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="CommsAgeDisplayLabel">
+         <property name="text">
+          <string>Age</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="LastUpdateDisplayLabel">
+         <property name="text">
+          <string>Last update</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="PacketsNumDisplayLabel">
+         <property name="text">
+          <string>Packets</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLabel" name="PacketsNumIndicatorLabel">
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>LINK HEALTH</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -522,13 +554,89 @@ QFrame {
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="gridLayoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>19</x>
+        <y>300</y>
+        <width>231</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="2" column="0">
+        <widget class="QPushButton" name="RefreshPortsPushButton">
+         <property name="text">
+          <string>Refresh</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="AvaliablePortsLabel">
+         <property name="text">
+          <string>Ports</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="ConnectToPortPushButton">
+         <property name="text">
+          <string>Connect</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="AvailablePortsComboBox"/>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>CONNECTION</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="Line" name="line_4">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>280</y>
+        <width>20</width>
+        <height>121</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Orientation::Vertical</enum>
+      </property>
+     </widget>
+     <zorder>line_4</zorder>
+     <zorder>line_2</zorder>
+     <zorder>formLayoutWidget_2</zorder>
+     <zorder>verticalLayoutWidget</zorder>
+     <zorder>formLayoutWidget_3</zorder>
+     <zorder>formLayoutWidget</zorder>
+     <zorder>horizontalLayoutWidget_2</zorder>
+     <zorder>line</zorder>
+     <zorder>formLayoutWidget</zorder>
+     <zorder>gridLayoutWidget</zorder>
+     <zorder>line_3</zorder>
+     <zorder>gridLayoutWidget_2</zorder>
+     <zorder>gridLayoutWidget_3</zorder>
     </widget>
+    <widget class="QWidget" name="page"/>
    </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
       <x>60</x>
-      <y>49</y>
+      <y>10</y>
       <width>671</width>
       <height>31</height>
      </rect>
@@ -536,15 +644,18 @@ QFrame {
     <layout class="QHBoxLayout" name="horizontalLayoutTopButtonsSet">
      <item>
       <widget class="QPushButton" name="LeftMenuButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>&lt;- </string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="MenuIndicatorLabel">
+      <widget class="QLabel" name="MicroGCSLabel">
        <property name="text">
-        <string>MainMenu</string>
+        <string>MicroGCS</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -553,6 +664,9 @@ QFrame {
      </item>
      <item>
       <widget class="QPushButton" name="RightMenuButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>-&gt;</string>
        </property>
@@ -563,10 +677,10 @@ QFrame {
    <widget class="QTextEdit" name="MainOutputTextEdit">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>600</y>
-      <width>671</width>
-      <height>141</height>
+      <x>20</x>
+      <y>470</y>
+      <width>761</width>
+      <height>181</height>
      </rect>
     </property>
     <property name="placeholderText">
@@ -580,7 +694,7 @@ QFrame {
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

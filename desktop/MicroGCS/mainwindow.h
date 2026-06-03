@@ -48,6 +48,10 @@ private:
     QString currentLogPath;
     bool telemetryWasStale = false;
 
+    QTimer commandTimeoutTimer;
+    QString pendingCommand;
+    bool waitingForCommandResponse = false;
+
     Ui::MainWindow *ui;
 
     QPushButton* LeftMenuButton;
@@ -88,5 +92,9 @@ private:
     void stopSessionLog();
     void logEvent(const QString& direction, const QString& type, const QString& payload);
     QString escapeCsvField(const QString& value) const;
+
+    void startCommandTimeout(const QString& command);
+    void clearCommandTimeout();
+    void handleCommandTimeout();
 };
 #endif // MAINWINDOW_H

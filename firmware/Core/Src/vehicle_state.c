@@ -77,7 +77,7 @@ void VehicleState_Update(VehicleState* state, float dt_seconds) {
             break;
         
         case MODE_RTL:
-            if (state->altitude > 0.0f) {
+            if (state->altitude > 0.0f && state->x <= 0.0f && state->y <= 0.0f) {
                 state->altitude -= 0.5f * dt_seconds;
 
                 if (state->altitude < 0.0f) {
@@ -89,7 +89,7 @@ void VehicleState_Update(VehicleState* state, float dt_seconds) {
                 state->x -= 0.3f * dt_seconds;
 
                 if (state->x < 0.0f) {
-                    state->x - 0.0f;
+                    state->x = 0.0f;
                 }
             }
 
@@ -97,7 +97,7 @@ void VehicleState_Update(VehicleState* state, float dt_seconds) {
                 state->y -= 0.3f * dt_seconds;
 
                 if (state->y < 0.0f) {
-                    state->y - 0.0f;
+                    state->y = 0.0f;
                 }
             }
 

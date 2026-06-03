@@ -142,6 +142,14 @@ MainWindow::MainWindow(QWidget *parent)
             this,
             &MainWindow::updateTelemetryHealth);
 
+    commandTimeoutTimer.setSingleShot(true);
+
+    connect(&commandTimeoutTimer,
+        &QTimer::timeout,
+        this,
+        &MainWindow::handleCommandTimeout
+        );
+
 
     // Proper boot up
     refreshPorts();
@@ -294,10 +302,12 @@ void MainWindow::handleReadyRead() {
             MainOutputTextEdit->append(QString("[ACK] %1").arg(line));
             updateLastCommandResult(line, false);
             logEvent("RX", "ACK", line);
+            clearCommandTimeout();
         } else if (line.startsWith("ERR;")) {
             MainOutputTextEdit->append(QString("[ERR] %1").arg(line));
             updateLastCommandResult(line, true);
             logEvent("RX", "ERR", line);
+            clearCommandTimeout();
         } else {
             MainOutputTextEdit->append(QString("[RX UNKNOWN] %1").arg(line));
             logEvent("RX", "UNKNOWN", line);
@@ -346,12 +356,13 @@ void MainWindow::sendCommand(const QString& command)
     ui->MainOutputTextEdit->append(QString("[TX] %1").arg(command));
 
     logEvent("TX", "CMD", command);
+    startCommandTimeout(command);
 }
 
 void MainWindow::updateTelemetryDisplay(const TelemetryPacket& packet)
 {
     // signal block applies to the scope
-    /*{
+    {
         QSignalBlocker blocker(ui->ArmedCheckBox);
         ui->ArmedCheckBox->setChecked(packet.armed);
     }
@@ -364,7 +375,7 @@ void MainWindow::updateTelemetryDisplay(const TelemetryPacket& packet)
         ui->ManualRadioButton->setChecked(packet.mode == "MANUAL");
         ui->AutoRadioButton->setChecked(packet.mode == "AUTO");
         ui->RTLRadioButton->setChecked(packet.mode == "RTL");
-    }*/
+    }
 
     ui->ModeIndicatorLabel->setText(packet.mode);
     ui->BatteryIndicatorLabel->setText(QString("%1 %").arg(packet.battery, 0, 'f', 1));
@@ -385,23 +396,26 @@ void MainWindow::setControlPanelEnabled(bool enabled)
 
 void MainWindow::updateTelemetryHealth() {
     if (!serialPort.isOpen()) {
-        TelemetryHealthIndicatorLabel->setText("Port Disconnected");
+        TelemetryHealthIndicatorLabel->setText("PORT DISCONNECTED");
+        TelemetryHealthIndicatorLabel->setStyleSheet("color: #E74C3C; font-weight: bold;"); // red
         CommsAgeIndicatorLabel->setText("---");
         return;
     }
 
     if (!hasReceivedTelemetry) {
-        TelemetryHealthIndicatorLabel->setText("Waiting");
+        TelemetryHealthIndicatorLabel->setText("WAITING");
+        TelemetryHealthIndicatorLabel->setStyleSheet("color: #F1C40F; font-weight: bold;"); // amber
         CommsAgeIndicatorLabel->setText("---");
         return;
     }
 
     const quint64 ageMs = lastTelemetryTime.msecsTo(QDateTime::currentDateTime());
 
-    CommsAgeIndicatorLabel->setText(QString::number(ageMs));
+    CommsAgeIndicatorLabel->setText(QString::number(ageMs) + " ms");
 
-    if (ageMs > 20000) {
+    if (ageMs > 2000) { // 2 seconds
         TelemetryHealthIndicatorLabel->setText("STALE");
+        TelemetryHealthIndicatorLabel->setStyleSheet("color: #F1C40F; font-weight: bold;"); // amber
 
         if (!telemetryWasStale) {
             telemetryWasStale = true;
@@ -409,6 +423,7 @@ void MainWindow::updateTelemetryHealth() {
         }
     } else {
         TelemetryHealthIndicatorLabel->setText("OK");
+        TelemetryHealthIndicatorLabel->setStyleSheet("color: #2ECC71; font-weight: bold;"); // green
         telemetryWasStale = false;
     }
 }
@@ -418,7 +433,7 @@ void MainWindow::markTelemetryReceived() {
     lastTelemetryTime = QDateTime::currentDateTime();
     telemetryPacketCount++;
 
-    LastUpdateIndicatorLabel->setText(lastTelemetryTime.toString("HH:mm:ss.zzzz"));
+    LastUpdateIndicatorLabel->setText(lastTelemetryTime.toString("HH:mm:ss.zzz"));
     PacketsNumIndicatorLabel->setText(QString::number(telemetryPacketCount));
 
     if (telemetryWasStale){
@@ -492,6 +507,31 @@ QString MainWindow::escapeCsvField(const QString& value) const {
     QString escaped = value;
     escaped.replace("\"", "\"\"");
     return QString("\"%1\"").arg(escaped);
+}
+
+void MainWindow::startCommandTimeout(const QString& command) {
+    pendingCommand = command;
+    waitingForCommandResponse = true;
+    commandTimeoutTimer.start(2000);
+}
+
+void MainWindow::clearCommandTimeout() {
+    waitingForCommandResponse = false;
+    pendingCommand.clear();
+    commandTimeoutTimer.stop();
+}
+
+void MainWindow::handleCommandTimeout() {
+    if (!waitingForCommandResponse) {
+        return;
+    }
+
+    const QString message = QString("Command timeout: no ACK/ERR for %1").arg(pendingCommand);
+    MainOutputTextEdit->append(QString("[WARN] %1").arg(message));
+    logEvent("SYS", "WARN", message);
+
+    waitingForCommandResponse = false;
+    pendingCommand.clear();
 }
 
 MainWindow::~MainWindow()
